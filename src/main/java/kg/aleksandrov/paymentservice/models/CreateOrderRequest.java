@@ -13,7 +13,6 @@ public class CreateOrderRequest {
     @NotNull(message = "Сумма не может равняться нулю")
     private BigDecimal amount;
     private String requisite;
-    private String source;
 
     public BigDecimal getAmount() {
         return amount;
@@ -31,11 +30,4 @@ public class CreateOrderRequest {
         this.requisite = requisite;
     }
 
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
 }

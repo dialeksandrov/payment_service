@@ -42,11 +42,11 @@ public class PaymentEntity {
     @Column(name = "canceled_payment_id")
     private Long canceledPaymentId;
 
-    public PaymentEntity(CreateOrderRequest request, PaymentStatus status){
+    public PaymentEntity(CreateOrderRequest request, String source, PaymentStatus status){
         this.createdDt = LocalDateTime.now();
         this.amount = request.getAmount();
         this.requisite = request.getRequisite();
         this.status = status;
-        this.source = request.getSource();
+        this.source = source;
     }
 }

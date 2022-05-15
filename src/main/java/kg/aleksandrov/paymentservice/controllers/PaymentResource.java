@@ -7,6 +7,8 @@ import kg.aleksandrov.paymentservice.models.OrderResponse;
 import kg.aleksandrov.paymentservice.services.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,9 +27,11 @@ public class PaymentResource {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponse createOrder(@RequestBody CreateOrderRequest request){
+    public RestResponse createOrder(@RequestBody CreateOrderRequest request,
+                                    Authentication authentication){
         try {
-            OrderResponse response = paymentService.createOrder(request);
+            User user = (User) authentication.getPrincipal();
+            OrderResponse response = paymentService.createOrder(request, user.getUsername());
             return RestResponse.success(response, "Успешно");
         } catch (Exception e){
             log.error(e.getMessage());

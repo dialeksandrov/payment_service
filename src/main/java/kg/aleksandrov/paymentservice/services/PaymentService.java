@@ -11,7 +11,7 @@ import kg.aleksandrov.paymentservice.models.OrderResponse;
 
 public interface PaymentService {
 
-    OrderResponse createOrder(CreateOrderRequest orderRequest);
+    OrderResponse createOrder(CreateOrderRequest orderRequest, String username);
 
     OrderResponse confirmOrder(ChangeStatusRequest changeRequest);
 

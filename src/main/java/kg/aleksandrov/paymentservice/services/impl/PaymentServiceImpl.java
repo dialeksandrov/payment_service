@@ -36,13 +36,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public OrderResponse createOrder(CreateOrderRequest orderRequest) {
+    public OrderResponse createOrder(CreateOrderRequest orderRequest, String username) {
         if (!RequisiteFormatter.getInstance().isValid(orderRequest.getRequisite())){
             throw new InvalidRequisiteException("Неверный формат реквизита");
         }
 
         try {
-           PaymentEntity payment = paymentRepository.save(new PaymentEntity(orderRequest, PaymentStatus.CREATED));
+           PaymentEntity payment = paymentRepository.save(new PaymentEntity(orderRequest, username, PaymentStatus.CREATED));
            return new OrderResponse(payment.getId(), "Платежное поручение успешно создано", PaymentStatus.CREATED);
         } catch (Exception e) {
             log.error("Unable create order cause {}", e.getMessage());
@@ -66,6 +66,9 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             switch (request.getState()){
                 case CONFIRM:
+                    if (fromDb.getStatus().equals(PaymentStatus.SUCCESS)){
+                        return new OrderResponse(fromDb.getId(), "Платеж уже был подтвержден ранее", PaymentStatus.SUCCESS);
+                    }
                     fromDb.setStatus(status);
                     paymentRepository.saveAndFlush(fromDb);
                     return new OrderResponse(fromDb.getId(), "Платеж успешно подтвержден", PaymentStatus.SUCCESS);
