@@ -3,6 +3,7 @@ package kg.aleksandrov.paymentservice.services;
 import kg.aleksandrov.paymentservice.models.ChangeStatusRequest;
 import kg.aleksandrov.paymentservice.models.CreateOrderRequest;
 import kg.aleksandrov.paymentservice.models.OrderResponse;
+import kg.aleksandrov.paymentservice.models.OrderStatusResponse;
 
 /**
  * @author dialeksandrov
@@ -16,4 +17,6 @@ public interface PaymentService {
     OrderResponse confirmOrder(ChangeStatusRequest changeRequest);
 
     OrderResponse cancelOrder(ChangeStatusRequest changeRequest);
+
+    OrderStatusResponse checkOrderStatus(Long paymentId);
 }

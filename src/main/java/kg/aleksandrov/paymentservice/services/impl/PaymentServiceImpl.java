@@ -4,20 +4,17 @@ import kg.aleksandrov.paymentservice.common.enums.PaymentStatus;
 import kg.aleksandrov.paymentservice.dao.PaymentRepository;
 import kg.aleksandrov.paymentservice.dao.UserRepository;
 import kg.aleksandrov.paymentservice.dao.entity.PaymentEntity;
-import kg.aleksandrov.paymentservice.dao.entity.UserEntity;
 import kg.aleksandrov.paymentservice.exceptions.InvalidRequisiteException;
 import kg.aleksandrov.paymentservice.models.ChangeStatusRequest;
 import kg.aleksandrov.paymentservice.models.CreateOrderRequest;
 import kg.aleksandrov.paymentservice.models.OrderResponse;
+import kg.aleksandrov.paymentservice.models.OrderStatusResponse;
 import kg.aleksandrov.paymentservice.services.PaymentService;
 import kg.aleksandrov.paymentservice.utils.RequisiteFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author dialeksandrov
@@ -59,6 +56,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public OrderResponse cancelOrder(ChangeStatusRequest changeRequest) {
         return changeOrderStatus(changeRequest, PaymentStatus.CANCELED);
+    }
+
+    @Override
+    public OrderStatusResponse checkOrderStatus(Long paymentId) {
+        if (paymentId == null)
+            throw new RuntimeException("Платеж с id: " + paymentId + " не найден");
+        PaymentEntity entity = paymentRepository.getById(paymentId);
+        return new OrderStatusResponse(paymentId, entity.getStatus());
     }
 
     private OrderResponse changeOrderStatus(ChangeStatusRequest request, PaymentStatus status){

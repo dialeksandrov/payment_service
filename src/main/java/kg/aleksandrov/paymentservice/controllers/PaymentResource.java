@@ -4,6 +4,7 @@ import kg.aleksandrov.paymentservice.common.RestResponse;
 import kg.aleksandrov.paymentservice.models.ChangeStatusRequest;
 import kg.aleksandrov.paymentservice.models.CreateOrderRequest;
 import kg.aleksandrov.paymentservice.models.OrderResponse;
+import kg.aleksandrov.paymentservice.models.OrderStatusResponse;
 import kg.aleksandrov.paymentservice.services.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -60,4 +61,16 @@ public class PaymentResource {
             return RestResponse.error("Произошла ошибка");
         }
     }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponse checkPaymentStatus(@PathVariable Long id){
+        try {
+            OrderStatusResponse response = paymentService.checkOrderStatus(id);
+            return RestResponse.success(response, "Успешно");
+        } catch (Exception e){
+            log.error(e.getMessage());
+            return RestResponse.error("Произошла ошибка");
+        }
+    }
+
 }
