@@ -89,8 +89,8 @@ public class PaymentServiceImpl implements PaymentService {
                     forCancel.setSource(fromDb.getSource());
                     forCancel.setCreatedDt(LocalDateTime.now());
                     forCancel.setCanceledPaymentId(request.getOrderId());
-                    paymentRepository.save(forCancel);
-                    return new OrderResponse(fromDb.getId(), "Платеж успешно отменен", PaymentStatus.CANCELED);
+                    PaymentEntity canceledPayment = paymentRepository.save(forCancel);
+                    return new OrderResponse(canceledPayment.getId(), "Платеж успешно отменен", PaymentStatus.CANCELED);
             }
         } catch (Exception e) {
             log.error("Unable change status for payment {} cause {}", fromDb.getId(), e.getMessage());
