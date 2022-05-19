@@ -15,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author dialeksandrov
@@ -62,8 +65,15 @@ public class PaymentServiceImpl implements PaymentService {
     public OrderStatusResponse checkOrderStatus(Long paymentId) {
         if (paymentId == null)
             throw new RuntimeException("Платеж с id: " + paymentId + " не найден");
-        PaymentEntity entity = paymentRepository.getById(paymentId);
-        return new OrderStatusResponse(paymentId, entity.getStatus());
+        List<PaymentEntity> entities = paymentRepository.findAllByIdOrCanceledPaymentId(paymentId);
+        Optional<PaymentEntity> payment;
+        if (entities.size() == 1){
+            payment = Optional.ofNullable(entities.get(0));
+        } else {
+            payment = entities.stream().filter(x -> x.getStatus().equals(PaymentStatus.CANCELED))
+                    .findFirst();
+        }
+        return new OrderStatusResponse(paymentId, payment.get().getStatus());
     }
 
     private OrderResponse changeOrderStatus(ChangeStatusRequest request, PaymentStatus status){
